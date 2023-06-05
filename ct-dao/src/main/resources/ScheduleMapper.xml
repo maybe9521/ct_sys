@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ct.dao.ScheduleMapper">
+    <select id="getSchedule" resultType="cn.ct.model.dto.ScheduleDto" parameterType="java.util.Map">
+        select
+        t1.id as id,
+        t1.user_id as userId,
+        t1.department_id as departmentId,
+        t1.room_id as roomId,
+        t1.sign as sign,
+        t1.quantity as quantity,
+        t1.remaining_quantity as remainingQuantity,
+        t1.inquiry_time as inquiryTime,
+        t2.user_name as doctorName,
+        t3.name as roomName
+        from schedule as t1
+        left join sys_users as t2 on t1.user_id = t2.id
+        left join room as t3 on t1.room_id = t3.id
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="departmentId != null">
+                and t1.department_id=#{departmentId}
+            </if>
+            <if test="sign != null and sign!=''">
+                and t1.sign=#{sign}
+            </if>
+        </trim>
+    </select>
+
+    <update id="updateSchedule" parameterType="cn.ct.model.pojo.Schedule">
+        update schedule
+        <trim prefix="set" suffixOverrides="," suffix="where id=#{id}">
+            <if test="userId != null">
+                user_id=#{userId},
+            </if>
+            <if test="departmentId != null">
+                department_id=#{departmentId},
+            </if>
+            <if test="roomId != null">
+                room_id=#{roomId},
+            </if>
+            <if test="sign != null and sign!=''">
+                sign=#{sign},
+            </if>
+            <if test="quantity != null">
+                quantity=#{quantity},
+            </if>
+            <if test="remainingQuantity != null">
+                remaining_quantity=#{remainingQuantity},
+            </if>
+            <if test="inquiryTime != null">
+                inquiry_time=#{inquiryTime},
+            </if>
+        </trim>
+    </update>
+
+    <select id="getScheduleById" resultType="cn.ct.model.pojo.Schedule">
+        select
+        id as id,
+        user_id as userId,
+        department_id as departmentId,
+        room_id as roomId,
+        sign as sign,
+        quantity as quantity,
+        remaining_quantity as remainingQuantity,
+        inquiry_time as inquiryTime,
+        created_time as createdTime,
+        updated_time as updatedTime
+        from schedule
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+        </trim>
+    </select>
+</mapper>

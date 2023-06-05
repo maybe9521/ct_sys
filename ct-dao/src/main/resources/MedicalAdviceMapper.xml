@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ct.dao.MedicalAdviceMapper">
+
+    <insert id="addMedicalAdvice" parameterType="cn.ct.model.req.MedicalAdviceReq">
+        insert into medical_advice(
+                        registry_id,
+                        user_id,
+                        chief_complaint,
+                        diagnosis
+                        )
+        values(
+                     #{registryId},
+                     #{userId},
+                     #{chiefComplaint},
+                     #{diagnosis}
+                    )
+    </insert>
+
+    <select id="getMedicalAdvice" resultType="cn.ct.model.dto.MedicalAdviceDto">
+        select
+            t1.id as id,
+            t1.registry_id as registryId,
+            t1.user_id as userId,
+            t1.chief_complaint as chiefComplaint,
+            t1.diagnosis as diagnosis,
+            t1.created_time as createdTime,
+            t1.updated_time as updatedTime,
+            t2.user_name as doctorName
+        from
+            medical_advice AS t1
+        LEFT JOIN sys_users AS t2 ON t1.user_id = t2.id
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="registryId != null">
+                and t1.registry_id=#{registryId}
+            </if>
+        </trim>
+    </select>
+
+    <update id="updateMedicalAdvice" parameterType="cn.ct.model.req.MedicalAdviceReq">
+        update medical_advice
+        <trim prefix="set" suffixOverrides="," suffix="where registry_id=#{registryId}">
+            <if test="userId != null and userId!=''">
+                user_id=#{userId},
+            </if>
+            <if test="chiefComplaint != null and chiefComplaint!=''">
+                chief_complaint=#{chiefComplaint},
+            </if>
+            <if test="diagnosis != null and diagnosis!=''">
+                diagnosis=#{diagnosis},
+            </if>
+        </trim>
+    </update>
+
+</mapper>

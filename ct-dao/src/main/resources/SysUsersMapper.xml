@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ct.dao.SysUsersMapper">
+
+    <select id="getDoctorList" resultType="cn.ct.model.dto.SysUserDto" parameterType="java.util.Map">
+        select
+        t1.id as id,
+        t1.department_id as departmentId,
+        t1.user_type as userType,
+        t1.head_url as headUrl,
+        t1.account as account,
+        t1.user_name as userName
+        from sys_users as t1
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="departmentId != null">
+                and t1.department_id=#{departmentId}
+            </if>
+            <if test="userType != null">
+                and t1.user_type=#{userType}
+            </if>
+        </trim>
+    </select>
+
+
+    <select id="getUsersCount" resultType="java.lang.Integer" parameterType="cn.ct.model.req.SysUserReq">
+        select count(*) from sys_users
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+            <if test="departmentId != null">
+                and department_id=#{departmentId}
+            </if>
+            <if test="userType != null">
+                and user_type=#{userType}
+            </if>
+            <if test="headUrl != null">
+                and head_url=#{headUrl}
+            </if>
+            <if test="account != null">
+                and account=#{account}
+            </if>
+            <if test="userName != null">
+                and user_name=#{userName}
+            </if>
+            <if test="password != null">
+                and password=#{password}
+            </if>
+            <if test="createdUserId != null">
+                and created_user_id=#{createdUserId}
+            </if>
+        </trim>
+    </select>
+
+    <select id="getUsersList" resultType="cn.ct.model.dto.SysUserDto" parameterType="cn.ct.model.req.SysUserReq">
+        select
+            t1.id as id,
+            t1.department_id as departmentId,
+            t1.user_type as userType,
+            t1.head_url as headUrl,
+            t1.account as account,
+            t1.user_name as userName,
+            t1.created_time as createdTime,
+            t1.updated_time as updatedTime,
+            t1.created_user_id as createdUserId,
+            t2.role_name as userTypeName
+        from sys_users t1 left join sys_roles t2 on t1.user_type = t2.id
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">
+                and t1.id=#{id}
+            </if>
+            <if test="departmentId != null">
+                and t1.department_id=#{departmentId}
+            </if>
+            <if test="userType != null">
+                and t1.user_type=#{userType}
+            </if>
+            <if test="headUrl != null">
+                and t1.head_url=#{headUrl}
+            </if>
+            <if test="account != null">
+                and t1.account=#{account}
+            </if>
+            <if test="userName != null">
+                and t1.user_name=#{userName}
+            </if>
+            <if test="password != null">
+                and t1.password=#{password}
+            </if>
+            <if test="createdUserId != null">
+                and t1.created_user_id=#{createdUserId}
+            </if>
+        </trim>
+        <if test="beginPos != null and pageSize != null ">
+            limit #{beginPos},#{pageSize}
+        </if>
+    </select>
+
+    <insert id="addUser" parameterType="cn.ct.model.req.SysUserReq">
+        insert into sys_users(
+          department_id,
+          user_type,
+          head_url,
+          account,
+          user_name,
+          password,
+          salt,
+          created_user_id
+        )
+        values(
+          #{departmentId},
+          #{userType},
+          #{headUrl},
+          #{account},
+          #{userName},
+          #{password},
+          #{salt},
+          #{createdUserId}
+        )
+    </insert>
+
+    <select id="getUserByAccount" resultType="cn.ct.model.dto.SysUserDto" parameterType="java.lang.String">
+        select
+            t1.id as id,
+            t1.department_id as departmentId,
+            t1.user_type as userType,
+            t1.head_url as headUrl,
+            t1.account as account,
+            t1.user_name as userName,
+            t1.password as password,
+            t1.salt as salt,
+            t1.created_time as createdTime,
+            t1.updated_time as updatedTime,
+            t1.created_user_id as createdUserId,
+            t2.role_name as userTypeName
+        from sys_users t1 left join sys_roles t2 on t1.user_type = t2.id
+        where t1.account = #{account}
+    </select>
+
+    <select id="getUserById" resultType="cn.ct.model.dto.SysUserDto" parameterType="java.lang.Long">
+        select
+            t1.id as id,
+            t1.department_id as departmentId,
+            t1.user_type as userType,
+            t1.head_url as headUrl,
+            t1.account as account,
+            t1.user_name as userName,
+            t1.password as password,
+            t1.salt as salt,
+            t1.created_time as createdTime,
+            t1.updated_time as updatedTime,
+            t1.created_user_id as createdUserId
+        from sys_users t1
+        where t1.id = #{id}
+    </select>
+    <select id="getUsersListOne" resultType="cn.ct.model.dto.SysUserDto">
+        select
+            t1.id as id,
+            t1.department_id as departmentId,
+            t1.user_type as userType,
+            t1.head_url as headUrl,
+            t1.account as account,
+            t1.user_name as userName,
+            t1.created_time as createdTime,
+            t1.updated_time as updatedTime,
+            t1.created_user_id as createdUserId
+        from sys_users t1
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">
+                and t1.id=#{id}
+            </if>
+            <if test="departmentId != null">
+                and t1.department_id=#{departmentId}
+            </if>
+            <if test="userType != null">
+                and t1.user_type=#{userType}
+            </if>
+            <if test="headUrl != null">
+                and t1.head_url=#{headUrl}
+            </if>
+            <if test="account != null">
+                and t1.account=#{account}
+            </if>
+            <if test="userName != null">
+                and t1.user_name=#{userName}
+            </if>
+            <if test="password != null">
+                and t1.password=#{password}
+            </if>
+            <if test="createdUserId != null">
+                and t1.created_user_id=#{createdUserId}
+            </if>
+        </trim>
+        <if test="beginPos != null and pageSize != null ">
+            limit #{beginPos},#{pageSize}
+        </if>
+    </select>
+    <select id="getUserByAccountOne" resultType="cn.ct.model.dto.SysUserDto">
+        select
+            t1.id as id,
+            t1.department_id as departmentId,
+            t1.user_type as userType,
+            t1.head_url as headUrl,
+            t1.account as account,
+            t1.user_name as userName,
+            t1.password as password,
+            t1.salt as salt,
+            t1.created_time as createdTime,
+            t1.updated_time as updatedTime,
+            t1.created_user_id as createdUserId
+        from sys_users t1
+        where t1.account = #{account}
+    </select>
+</mapper>

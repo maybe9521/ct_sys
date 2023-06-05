@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ct.dao.RegistryMapper">
+
+    <insert id="addRegistry" parameterType="cn.ct.model.req.RegistryReq">
+        insert into registry(
+                        patient_id,
+                        schedule_id,
+                        user_id,
+                        department_id,
+                        room_id,
+                        fee,
+                        pay_fee,
+                        medicare_fee,
+                        is_medicare
+                        )
+        values(
+                     #{patientId},
+                     #{scheduleId},
+                     #{userId},
+                     #{departmentId},
+                     #{roomId},
+                     #{fee},
+                     #{payFee},
+                     #{medicareFee},
+                     #{isMedicare}
+                    )
+    </insert>
+
+    <select id="getRegisterList" resultType="cn.ct.model.dto.RegistryDto" parameterType="cn.ct.model.req.RegistryReq">
+        SELECT
+            t1.id,
+            t2.name AS patientName,
+            t2.sex AS patientSex,
+            t2.id_card AS patientIdCard,
+            t3.name AS departmentName,
+            t4.user_name AS doctorName,
+            t1.registry_time AS registryTime,
+            t1.created_time AS createdTime,
+            t1.status
+        FROM
+            registry AS t1
+            LEFT JOIN patient AS t2 ON t1.patient_id = t2.id
+            LEFT JOIN department AS t3 ON t1.department_id = t3.id
+            LEFT JOIN sys_users AS t4 ON t1.user_id = t4.id
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="userId != null and userId != 0">
+                and t1.user_id=#{userId}
+            </if>
+            <if test="departmentId != null and departmentId != 0">
+                and t1.department_id=#{departmentId}
+            </if>
+            <if test="status != null and status!=''">
+                and t1.status=#{status}
+            </if>
+            <if test="idCard != null and idCard!=''">
+                and t2.id_card like CONCAT('%',#{idCard},'%')
+            </if>
+        </trim>
+        ORDER BY
+            t1.registry_time DESC
+        <if test="beginPos != null and pageSize != null ">
+            limit #{beginPos},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getRegisterCount" resultType="java.lang.Integer" parameterType="cn.ct.model.req.RegistryReq">
+        SELECT
+            count(*)
+        FROM
+            registry AS t1
+            LEFT JOIN patient AS t2 ON t1.patient_id = t2.id
+            LEFT JOIN department AS t3 ON t1.department_id = t3.id
+            LEFT JOIN sys_users AS t4 ON t1.user_id = t4.id
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="userId != null and userId != 0">
+                and t1.user_id=#{userId}
+            </if>
+            <if test="departmentId != null and departmentId != 0">
+                and t1.department_id=#{departmentId}
+            </if>
+            <if test="status != null and status!=''">
+                and t1.status=#{status}
+            </if>
+            <if test="idCard != null and idCard!=''">
+                and t2.id_card like CONCAT('%',#{idCard},'%')
+            </if>
+        </trim>
+    </select>
+
+    <select id="getRegistryById" resultType="cn.ct.model.dto.RegistryDto">
+        SELECT
+            t2.name AS patientName,
+            t2.id_card AS patientIdCard,
+            t2.sex AS patientSex,
+            t2.birthday AS patientBirthday,
+            t2.address AS patientAddress,
+            t1.id,
+            t3.name AS departmentName,
+            t4.name AS roomName,
+            t5.user_name AS doctorName,
+            t1.consultation_time AS consultationTime,
+            t1.registry_time AS registryTime
+        FROM
+            registry AS t1
+            LEFT JOIN patient AS t2 ON t1.patient_id = t2.id
+            LEFT JOIN department AS t3 ON t1.department_id = t3.id
+            LEFT JOIN room AS t4 ON t1.room_id = t4.id
+            LEFT JOIN sys_users AS t5 ON t1.user_id = t5.id
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">
+                and t1.id=#{id}
+            </if>
+        </trim>
+        limit 1
+    </select>
+
+    <update id="updateRegistry" parameterType="cn.ct.model.req.RegistryReq">
+        update registry
+        <trim prefix="set" suffixOverrides="," suffix="where id=#{id}">
+            <if test="patientId != null">
+                patient_id=#{patientId},
+            </if>
+            <if test="scheduleId != null">
+                schedule_id=#{scheduleId},
+            </if>
+            <if test="userId != null">
+                user_id=#{userId},
+            </if>
+            <if test="departmentId != null">
+                department_id=#{departmentId},
+            </if>
+            <if test="roomId != null">
+                room_id=#{roomId},
+            </if>
+            <if test="status != null and status!=''">
+                status=#{status},
+            </if>
+            <if test="fee != null">
+                fee=#{fee},
+            </if>
+            <if test="payFee != null">
+                pay_fee=#{payFee},
+            </if>
+            <if test="medicareFee != null">
+                medicare_fee=#{medicareFee},
+            </if>
+            <if test="isMedicare != null and isMedicare!=''">
+                is_medicare=#{isMedicare},
+            </if>
+            <if test="consultationTime != null">
+                consultation_time=#{consultationTime},
+            </if>
+        </trim>
+    </update>
+</mapper>

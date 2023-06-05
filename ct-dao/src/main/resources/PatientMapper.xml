@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ct.dao.PatientMapper">
+    <insert id="addPatient" parameterType="cn.ct.model.req.PatientReq">
+        insert into patient(name,
+                            birthday,
+                            sex,
+                            address,
+                            phone,
+                            id_card,
+                            is_medicare,
+                            id_medicare)
+        values (#{name},
+                #{birthday},
+                #{sex},
+                #{address},
+                #{phone},
+                #{idCard},
+                #{isMedicare},
+                #{idMedicare})
+    </insert>
+
+    <select id="getPatientByIdCard" resultType="cn.ct.model.dto.PatientDto" parameterType="java.lang.String">
+        select
+        id as id,
+        name as name,
+        birthday as birthday,
+        sex as sex,
+        address as address,
+        phone as phone,
+        id_card as idCard,
+        is_medicare as isMedicare,
+        id_medicare as idMedicare
+        from patient
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="idCard != null and idCard != '' ">
+                and id_card=#{idCard}
+            </if>
+        </trim>
+    </select>
+
+    <update id="updatePatient" parameterType="cn.ct.model.req.PatientReq">
+        update patient
+        <trim prefix="set" suffixOverrides="," suffix="where id_card=#{idCard}">
+            <if test="name != null and name!=''">
+                name=#{name},
+            </if>
+            <if test="birthday != null">
+                birthday=#{birthday},
+            </if>
+            <if test="sex != null and sex!=''">
+                sex=#{sex},
+            </if>
+            <if test="address != null and address!=''">
+                address=#{address},
+            </if>
+            <if test="phone != null and phone!=''">
+                phone=#{phone},
+            </if>
+            <if test="isMedicare != null and isMedicare!=''">
+                is_medicare=#{isMedicare},
+            </if>
+            <if test="idMedicare != null and idMedicare!=''">
+                id_medicare=#{idMedicare},
+            </if>
+        </trim>
+    </update>
+
+    <select id="getPatientByIdMedicare" resultType="cn.ct.model.dto.PatientDto" parameterType="java.lang.String">
+        select
+        id as id,
+        name as name,
+        birthday as birthday,
+        sex as sex,
+        address as address,
+        phone as phone,
+        id_card as idCard,
+        is_medicare as isMedicare,
+        id_medicare as idMedicare
+        from patient
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="idMedicare != null and idMedicare != '' ">
+                and id_medicare=#{idMedicare}
+            </if>
+        </trim>
+    </select>
+    <select id="getPatientList" resultType="cn.ct.model.dto.PatientDto">
+        SELECT patient.id,
+               patient.`name`,
+               patient.birthday,
+               patient.sex,
+               patient.address,
+               patient.phone,
+               patient.id_card,
+               patient.is_medicare,
+               patient.id_medicare,
+               patient.created_time,
+               patient.updated_time
+        FROM patient
+    </select>
+</mapper>
